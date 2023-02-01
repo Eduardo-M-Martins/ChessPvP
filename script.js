@@ -4,6 +4,8 @@ const turnIndicator = document.createElement("div");
 
 // Set the text content of the turn indicator to "Current turn: White" and add it to the body
 turnIndicator.textContent = "Current turn: White";
+turnIndicator.style.color = 'white';
+turnIndicator.style.textAlign = 'center';
 document.body.appendChild(turnIndicator);
 let currentPlayer = "white";
 
