@@ -87,8 +87,23 @@ function movePiece(selectedPiece, targetPiece) {
     const targetRow = targetPiece.parentNode.rowIndex;
     const targetCol = targetPiece.cellIndex;
 
-    // check if the selected piece is a knight
+    // check the selected piece
     if (selectedPiece.textContent === pieceSymbols[currentPlayer].knight) {
+        return knightMove(selectedRow, selectedCol, targetRow, targetCol);
+    } else if (selectedPiece.textContent === pieceSymbols[currentPlayer].pawn) {
+        return pawnMove(selectedRow, selectedCol, targetRow, targetCol);
+    } else if (selectedPiece.textContent === pieceSymbols[currentPlayer].bishop) {
+        return bishopMove(selectedRow, selectedCol, targetRow, targetCol);
+    } else if (selectedPiece.textContent === pieceSymbols[currentPlayer].rook) {
+        return rookMove(selectedRow, selectedCol, targetRow, targetCol);
+    } else if (selectedPiece.textContent === pieceSymbols[currentPlayer].queen) {
+        return queenMove(selectedRow, selectedCol, targetRow, targetCol);
+    }else if (selectedPiece.textContent === pieceSymbols[currentPlayer].king) {
+        return kingMove(selectedRow, selectedCol, targetRow, targetCol);
+    }
+    return false;
+
+    function knightMove(selectedRow, selectedCol, targetRow, targetCol) {
         // check if the knight is moving to a square that is 2 rows and 1 column away, or 2 columns and 1 row away
         if ((Math.abs(selectedRow - targetRow) === 2 && Math.abs(selectedCol - targetCol) === 1) ||
             (Math.abs(selectedRow - targetRow) === 1 && Math.abs(selectedCol - targetCol) === 2)) {
@@ -96,13 +111,25 @@ function movePiece(selectedPiece, targetPiece) {
             selectedPiece.textContent = "";
             return true;
         }
-    } else {
-        // code to validate and move other pieces
-
-        // move the piece if the move is valid
-        targetPiece.textContent = selectedPiece.textContent;
-        selectedPiece.textContent = "";
-        return true;
     }
-    return false;
+
+    function pawnMove(selectedRow, selectedCol, targetRow, targetCol) {
+
+    }
+
+    function bishopMove(selectedRow, selectedCol, targetRow, targetCol) {
+
+    }
+
+    function rookMove(selectedRow, selectedCol, targetRow, targetCol) {
+
+    }
+
+    function queenMove(selectedRow, selectedCol, targetRow, targetCol) {
+
+    }
+
+    function kingMove(selectedRow, selectedCol, targetRow, targetCol) {
+
+    }
 }
