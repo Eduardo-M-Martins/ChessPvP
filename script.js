@@ -1,9 +1,13 @@
+// Get the chess board element and the turn indicator element
 const chessBoard = document.getElementById("chessBoard");
 const turnIndicator = document.createElement("div");
+
+// Set the text content of the turn indicator to "Current turn: White" and add it to the body
 turnIndicator.textContent = "Current turn: White";
 document.body.appendChild(turnIndicator);
-let currentPlayer = "white"; // white starts first
+let currentPlayer = "white";
 
+// Object to store the chess piece symbols for white and black
 const pieceSymbols = {
     white: {
         pawn: "\u2659",
@@ -23,13 +27,15 @@ const pieceSymbols = {
     }
 };
 
-// create the chess board with starting pieces
+// Loop through 8 rows and 8 columns to create the chess board
 for (let i = 0; i < 8; i++) {
-    const row = chessBoard.insertRow();
+    const row = chessBoard.insertRow(); // create a new row
     for (let j = 0; j < 8; j++) {
-        const cell = row.insertCell();
+        const cell = row.insertCell(); // create a new cell
+        // Add the class "white" or "black" depending on the row and column index
         cell.className = (i + j) % 2 === 0 ? "white" : "black";
-        cell.addEventListener("click", handleClick);
+        cell.addEventListener("click", handleClick); // add a click event listener
+        // Place the starting pieces on the board
         if (i === 1) cell.textContent = pieceSymbols.black.pawn;
         else if (i === 6) cell.textContent = pieceSymbols.white.pawn;
         else if (i < 2) {
@@ -47,26 +53,27 @@ for (let i = 0; i < 8; i++) {
         }
     }
 }
-
 let selectedPiece = null;
 
+// Handle the click event
 function handleClick(event) {
-    if (!event.target.textContent) return;
+    const targetCell = event.target;
 
-    if (event.target.textContent.includes(pieceSymbols[currentPlayer].pawn) ||
-        event.target.textContent.includes(pieceSymbols[currentPlayer].knight) ||
-        event.target.textContent.includes(pieceSymbols[currentPlayer].bishop) ||
-        event.target.textContent.includes(pieceSymbols[currentPlayer].rook) ||
-        event.target.textContent.includes(pieceSymbols[currentPlayer].queen) ||
-        event.target.textContent.includes(pieceSymbols[currentPlayer].king)) {
+    const isCurrentPlayerPiece = targetCell.textContent.includes(pieceSymbols[currentPlayer].pawn) ||
+        targetCell.textContent.includes(pieceSymbols[currentPlayer].knight) ||
+        targetCell.textContent.includes(pieceSymbols[currentPlayer].bishop) ||
+        targetCell.textContent.includes(pieceSymbols[currentPlayer].rook) ||
+        targetCell.textContent.includes(pieceSymbols[currentPlayer].queen) ||
+        targetCell.textContent.includes(pieceSymbols[currentPlayer].king);
+
+    if (isCurrentPlayerPiece) {
         if (!selectedPiece) {
-            selectedPiece = event.target;
+            selectedPiece = targetCell;
             return;
         }
     } else {
         if (!selectedPiece) return;
-        const targetPiece = event.target;
-        if (movePiece(selectedPiece, targetPiece)) {
+        if (movePiece(selectedPiece, targetCell)) {
             currentPlayer = currentPlayer === "white" ? "black" : "white";
             turnIndicator.textContent = `Current turn: ${currentPlayer[0].toUpperCase() + currentPlayer.slice(1)}`;
         }
@@ -75,7 +82,6 @@ function handleClick(event) {
 }
 
 function movePiece(selectedPiece, targetPiece) {
-    // get the row and column of the selected piece and target cell
     const selectedRow = selectedPiece.parentNode.rowIndex;
     const selectedCol = selectedPiece.cellIndex;
     const targetRow = targetPiece.parentNode.rowIndex;
@@ -83,11 +89,9 @@ function movePiece(selectedPiece, targetPiece) {
 
     // check if the selected piece is a knight
     if (selectedPiece.textContent === pieceSymbols[currentPlayer].knight) {
-        // check if the knight is moving to a square that is 2 rows and 1 column away,
-        // or 2 columns and 1 row away
+        // check if the knight is moving to a square that is 2 rows and 1 column away, or 2 columns and 1 row away
         if ((Math.abs(selectedRow - targetRow) === 2 && Math.abs(selectedCol - targetCol) === 1) ||
             (Math.abs(selectedRow - targetRow) === 1 && Math.abs(selectedCol - targetCol) === 2)) {
-            // move the piece if the move is valid
             targetPiece.textContent = selectedPiece.textContent;
             selectedPiece.textContent = "";
             return true;
