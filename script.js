@@ -93,14 +93,14 @@ function movePiece(selectedPiece, targetPiece) {
     if (selectedPiece.textContent === pieceSymbols[currentPlayer].knight) {
         return knightMove(selectedRow, selectedCol, targetRow, targetCol);
     } else if (selectedPiece.textContent === pieceSymbols[currentPlayer].pawn) {
-        return pawnMove(selectedRow, selectedCol, targetRow, targetCol);
+        return pawnMove(selectedRow, selectedCol, targetRow, targetCol, currentPlayer);
     } else if (selectedPiece.textContent === pieceSymbols[currentPlayer].bishop) {
         return bishopMove(selectedRow, selectedCol, targetRow, targetCol);
     } else if (selectedPiece.textContent === pieceSymbols[currentPlayer].rook) {
         return rookMove(selectedRow, selectedCol, targetRow, targetCol);
     } else if (selectedPiece.textContent === pieceSymbols[currentPlayer].queen) {
         return queenMove(selectedRow, selectedCol, targetRow, targetCol);
-    }else if (selectedPiece.textContent === pieceSymbols[currentPlayer].king) {
+    } else if (selectedPiece.textContent === pieceSymbols[currentPlayer].king) {
         return kingMove(selectedRow, selectedCol, targetRow, targetCol);
     }
     return false;
@@ -113,10 +113,32 @@ function movePiece(selectedPiece, targetPiece) {
             selectedPiece.textContent = "";
             return true;
         }
+        return false;
     }
 
-    function pawnMove(selectedRow, selectedCol, targetRow, targetCol) {
-
+    function pawnMove(selectedRow, selectedCol, targetRow, targetCol, currentPlayer) {
+        if(currentPlayer === "white"){
+            if(selectedRow == 6 && (selectedRow-targetRow==1||(selectedRow-targetRow==2 )) && selectedCol==targetCol && targetPiece.textContent == ""){
+                targetPiece.textContent = selectedPiece.textContent;
+                selectedPiece.textContent = "";
+                return true;
+            } else if(selectedRow != 6 && selectedRow-targetRow==1 && selectedCol==targetCol && targetPiece.textContent == ""){
+                targetPiece.textContent = selectedPiece.textContent;
+                selectedPiece.textContent = "";
+                return true;
+            }
+        } else {
+            if(selectedRow == 1 && (targetRow-selectedRow==1||(targetRow-selectedRow==2 )) && selectedCol==targetCol && targetPiece.textContent == ""){
+                targetPiece.textContent = selectedPiece.textContent;
+                selectedPiece.textContent = "";
+                return true;
+            } else if(selectedRow != 1 && targetRow-selectedRow==1 && selectedCol==targetCol && targetPiece.textContent == ""){
+                targetPiece.textContent = selectedPiece.textContent;
+                selectedPiece.textContent = "";
+                return true;
+            }
+        }
+        return false;
     }
 
     function bishopMove(selectedRow, selectedCol, targetRow, targetCol) {
