@@ -187,12 +187,15 @@ function movePiece(selectedPiece, targetPiece) {
 
     function queenMove() {
         rookMove();
-        if(move) return;
+        if (move) return;
         bishopMove();
     }
 
     function kingMove() {
-
+        // The king can move one square in any direction
+        if (Math.abs(fromRow - toRow) <= 1 && Math.abs(fromCol - toCol) <= 1) {
+            move = true;
+        }
     }
 }
 
