@@ -103,7 +103,7 @@ function movePiece(selectedPiece, targetPiece) {
     if (move) {
         board[toRow][toCol] = board[fromRow][fromCol];
         board[fromRow][fromCol] = new Piece("", "", "");
-        test();
+        //test();
         currentPlayer = currentPlayer === "white" ? "black" : "white";
         turnIndicator.textContent = `Current turn: ${currentPlayer}`;
     }
@@ -144,7 +144,19 @@ function movePiece(selectedPiece, targetPiece) {
     }
 
     function bishopMove() {
- 
+        // Check if the move is a diagonal move
+        if (Math.abs(fromRow - toRow) !== Math.abs(fromCol - toCol)) return;
+        // Check if the path to the target is clear
+        let rowStep = (toRow - fromRow) / Math.abs(toRow - fromRow);
+        let colStep = (toCol - fromCol) / Math.abs(toCol - fromCol);
+        let currentRow = fromRow + rowStep;
+        let currentCol = fromCol + colStep;
+        while (currentRow !== toRow || currentCol !== toCol) {
+            if (board[currentRow][currentCol].type !== "") return;
+            currentRow += rowStep;
+            currentCol += colStep;
+        }
+        move = true;
     }
 
     function rookMove() {
