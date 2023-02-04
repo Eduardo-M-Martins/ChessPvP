@@ -41,7 +41,7 @@ for (let i = 0; i < 8; i++) {
             else if (j === 2 || j === 5) board[i][j] = new Piece("white", "\u2657", "bishop"); // White bishop
             else if (j === 3) board[i][j] = new Piece("white", "\u2655", "queen"); // White queen
             else if (j === 4) board[i][j] = new Piece("white", "\u2654", "king"); // White king
-        } else board[i][j] = new Piece("", "", "");
+        } else board[i][j] = new Piece("", "  ", "");
     }
 }
 updateBoard(board);
@@ -102,8 +102,8 @@ function movePiece(selectedPiece, targetPiece) {
 
     if (move) {
         board[toRow][toCol] = board[fromRow][fromCol];
-        board[fromRow][fromCol] = new Piece("", "", "");
-        //test();
+        board[fromRow][fromCol] = new Piece("", "  ", "");
+        consoleHistory();   
         currentPlayer = currentPlayer === "white" ? "black" : "white";
         turnIndicator.textContent = `Current turn: ${currentPlayer}`;
     }
@@ -133,7 +133,7 @@ function movePiece(selectedPiece, targetPiece) {
             && (fromRow + direction === toRow) && (history[history.length - 2][toRow + direction][toCol].type == "pawn")
             && (history[history.length - 1][toRow + direction][toCol].type == "")) {
             move = true;
-            board[fromRow][toCol] = new Piece("", "", "");
+            board[fromRow][toCol] = new Piece("", "  ", "");
         }
     }
 
@@ -199,12 +199,12 @@ function movePiece(selectedPiece, targetPiece) {
     }
 }
 
-function test() {
+function consoleHistory() {
+    console.clear();
     for (let k = 0; k < history.length; k++) {
         for (let i = 0; i < 8; i++) {
-            console.log(history[k][i][0].unicode + " " + history[k][i][1].unicode + " " + history[k][i][2].unicode + " " + history[k][i][3].unicode + " " + history[k][i][4].unicode + " " + history[k][i][5].unicode + " " + history[k][i][6].unicode + " " + history[k][i][7].unicode);
+            console.log(k+"  "+history[k][i][0].unicode + " " + history[k][i][1].unicode + " " + history[k][i][2].unicode + " " + history[k][i][3].unicode + " " + history[k][i][4].unicode + " " + history[k][i][5].unicode + " " + history[k][i][6].unicode + " " + history[k][i][7].unicode);
         }
-        console.log(k + "  _____________________________________________________________");
+        console.log("- - - - - - - - - - - - - -")
     }
-    console.log(history.length + "  =========================================================================================");
 }
