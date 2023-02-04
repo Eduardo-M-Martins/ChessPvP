@@ -160,11 +160,35 @@ function movePiece(selectedPiece, targetPiece) {
     }
 
     function rookMove() {
-
+        // Check if the move is vertical or horizontal
+        if (fromRow !== toRow && fromCol !== toCol) {
+            return;
+        }
+        // Check if the path to the target is clear
+        if (fromRow === toRow) {
+            const start = Math.min(fromCol, toCol) + 1;
+            const end = Math.max(fromCol, toCol);
+            for (let i = start; i < end; i++) {
+                if (board[fromRow][i].color !== "") {
+                    return;
+                }
+            }
+        } else if (fromCol === toCol) {
+            const start = Math.min(fromRow, toRow) + 1;
+            const end = Math.max(fromRow, toRow);
+            for (let i = start; i < end; i++) {
+                if (board[i][fromCol].color !== "") {
+                    return;
+                }
+            }
+        }
+        move = true;
     }
 
     function queenMove() {
-
+        rookMove();
+        if(move) return;
+        bishopMove();
     }
 
     function kingMove() {
