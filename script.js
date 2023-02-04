@@ -39,8 +39,8 @@ for (let i = 0; i < 8; i++) {
             if (j === 0 || j === 7) board[i][j] = new Piece("white", "\u2656", "rook"); // White rook
             else if (j === 1 || j === 6) board[i][j] = new Piece("white", "\u2658", "knight"); // White knight
             else if (j === 2 || j === 5) board[i][j] = new Piece("white", "\u2657", "bishop"); // White bishop
-            else if (j === 4) board[i][j] = new Piece("white", "\u2655", "queen"); // White queen
-            else if (j === 3) board[i][j] = new Piece("white", "\u2654", "king"); // White king
+            else if (j === 3) board[i][j] = new Piece("white", "\u2655", "queen"); // White queen
+            else if (j === 4) board[i][j] = new Piece("white", "\u2654", "king"); // White king
         } else board[i][j] = new Piece("", "", "");
     }
 }
