@@ -7,8 +7,21 @@
 </head>
 
 <body class="background">
-    <h1 class="title">Simple Chess</h1>
+    <h1 class="title">Simple Chess PvP</h1>
     <h4>Only using HTML, CSS and JS</h4>
+
+    <div class="modal-container">
+        <div class="modal">
+            <h2>Info</h2>
+            <hr /><span>Your pawn has reached the end of the board, choose a piece:</span><hr />
+            <div class="btns">
+                <button class="btn-rook" onclick="pawnToRook()">Rook</button>
+                <button class="btn-knight" onclick="pawnToKnight()">Knight</button>
+                <button class="btn-bishop" onclick="pawnToBishop()">Bishop</button>
+                <button class="btn-Queen" onclick="pawnToQueen()">Queen</button>
+            </div>
+        </div>
+    </div>
 
     <table id="chessBoard"></table>
     <script type='text/javascript' src='./script.js'></script>

@@ -1,6 +1,6 @@
 // Get the chess board element and create a div element to show the turn indicator
 const chessBoard = document.getElementById("chessBoard");
-const turnIndicator = document.createElement("div");
+const turnIndicator = document.createElement("h4");
 
 // Set the text content, color, and alignment for the turn indicator and add it to the body
 turnIndicator.textContent = "Current turn: White";
@@ -12,6 +12,12 @@ document.body.appendChild(turnIndicator);
 let currentPlayer = "white";
 let history = [];
 let selectedPiece = null;
+
+// Initialize the variables for the casteling control
+let wBigCasteling = true;
+let wSmallCasteling = true;
+let bBigCasteling = true;
+let bSmallCasteling = true;
 
 // Define the Piece class
 class Piece {
@@ -117,6 +123,7 @@ function movePiece(selectedPiece, targetPiece) {
                 }
             }
         } else {
+            pawnToPiece();
             currentPlayer = currentPlayer === "white" ? "black" : "white";
             turnIndicator.textContent = `Current turn: ${currentPlayer}`;
         }
@@ -244,4 +251,65 @@ function movePiece(selectedPiece, targetPiece) {
         }
         return false;
     }
+
+    function pawnToPiece() {
+        for (let i = 0; i < 8; i++) {
+            if (board[0][i].type === "pawn") openModal();
+            if (board[7][i].type === "pawn") openModal();
+        }
+    }
+}
+
+
+const modal = document.querySelector('.modal-container')
+function openModal() {
+    modal.classList.add('active')
+}
+function pawnToRook() {
+    for (let i = 0; i < 8; i++) {
+        if (board[0][i].type === "pawn") {
+            board[0][i] = new Piece("white", "\u2656", "rook");
+        }
+        if (board[7][i].type === "pawn") {
+            board[7][i] = new Piece("black", "\u265C", "rook");
+        }
+    }
+    updateBoard(board);
+    modal.classList.remove('active')
+}
+function pawnToKnight() {
+    for (let i = 0; i < 8; i++) {
+        if (board[0][i].type === "pawn") {
+            board[0][i] = new Piece("white", "\u2658", "knight")
+        }
+        if (board[7][i].type === "pawn") {
+            board[7][i] = new Piece("black", "\u265E", "knight");
+        }
+    }
+    updateBoard(board);
+    modal.classList.remove('active')
+}
+function pawnToBishop() {
+    for (let i = 0; i < 8; i++) {
+        if (board[0][i].type === "pawn") {
+            board[0][i] = new Piece("white", "\u2657", "bishop");
+        }
+        if (board[7][i].type === "pawn") {
+            board[7][i] = new Piece("black", "\u265D", "bishop");
+        }
+    }
+    updateBoard(board);
+    modal.classList.remove('active')
+}
+function pawnToQueen() {
+    for (let i = 0; i < 8; i++) {
+        if (board[0][i].type === "pawn") {
+            board[0][i] = new Piece("white", "\u2655", "queen");
+        }
+        if (board[7][i].type === "pawn") {
+            board[7][i] = new Piece("black", "\u265B", "queen");
+        }
+    }
+    updateBoard(board);
+    modal.classList.remove('active')
 }
