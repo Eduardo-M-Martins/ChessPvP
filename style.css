@@ -1,10 +1,24 @@
 body {
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-family: Courier New, monospace;
+    pointer-events: auto;
 }
 
-h1, h4 {
+body.modal-open {
+    pointer-events: none;
+}
+
+h1 {
     text-align: center;
     color: white;
+    line-height: 0.9;
+    font-size: 42;
+}
+
+h4 {
+    text-align: center;
+    color: white;
+    font-size: 18;
+    line-height: 0.0;
 }
 
 table {
@@ -18,18 +32,28 @@ td {
     height: 70px;
     text-align: center;
     vertical-align: middle;
-    font-size: 50;
+    font-size: 48;
     border: 1px solid black;
     cursor: pointer;
     user-select: none;
 }
 
+hr {
+    border: 0px;
+    border-top: 1px solid lightgray;
+}
+
+span {
+    margin: 10px auto;
+    font-weight: bold;
+}
+
 .background {
     background-color: #882d03;
     background-image: linear-gradient(90deg, rgba(211, 112, 0, 0.07) 50%, transparent 50%),
-    linear-gradient(90deg, rgba(211, 112, 0,.13) 50%, transparent 50%),
-    linear-gradient(90deg, transparent 50%, rgba(211, 112, 0,.17) 50%),
-    linear-gradient(90deg, transparent 50%, rgba(211, 112, 0,.19) 50%);
+        linear-gradient(90deg, rgba(211, 112, 0, .13) 50%, transparent 50%),
+        linear-gradient(90deg, transparent 50%, rgba(211, 112, 0, .17) 50%),
+        linear-gradient(90deg, transparent 50%, rgba(211, 112, 0, .19) 50%);
     background-size: 13px, 29px, 37px, 53px;
 }
 
@@ -39,4 +63,76 @@ td {
 
 .white {
     background-color: white;
+}
+
+.modal-container {
+    width: 100vw;
+    height: 100vw;
+    position: fixed;
+    top: 50px;
+    display: none;
+    z-index: 999;
+    justify-content: center;
+}
+
+.modal {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    width: 25%;
+    height: 15%;
+    border: 2px solid black;
+}
+
+.active {
+    display: flex;
+}
+
+.active .modal {
+    animation: modal .4s;
+}
+
+.btns {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.btns button {
+    font-size: 16;
+    font-family: Courier New, monospace;
+    padding: 10px;
+    border: 2px solid black;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    background-color: green;
+    font-weight: bold;
+    user-select: none;
+}
+
+@keyframes modal {
+    from {
+        opacity: 0;
+        transform: translate3d(0, -60px, 0);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@media (max-width: 500px) {
+    .modal {
+        padding: 10px;
+        width: 80%;
+    }
+
+    span,
+    .btns button {
+        font-size: smaller;
+    }
 }
