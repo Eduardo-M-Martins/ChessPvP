@@ -114,6 +114,10 @@ span {
     user-select: none;
 }
 
+.btns button:hover {
+  background-color: darkgreen;
+}
+
 @keyframes modal {
     from {
         opacity: 0;
