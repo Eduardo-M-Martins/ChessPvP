@@ -79,12 +79,16 @@ function updateBoard(board) {
 
 // Handle the click event
 function handleClick(event) {
-    // Get the row and column of the clicked cell
+    // Get the row and column of the clicked cell and change the color of pieces
     const row = event.target.parentNode.rowIndex;
     const col = event.target.cellIndex;
+    for (let i = 0; i < document.getElementsByTagName("td").length; i++) {
+        document.getElementsByTagName("td")[i].classList.remove("piece-selected");
+    }
 
     if (board[row][col].color === currentPlayer) {
         selectedPiece = { row, col };
+        event.target.classList.add("piece-selected");
     } else {
         if (!selectedPiece) return;
         const targetPiece = { row, col };

@@ -66,6 +66,10 @@ span {
     background-color: white;
 }
 
+.piece-selected {
+    color: blue;
+}
+
 .modal-container {
     width: 100vw;
     height: 100vw;
