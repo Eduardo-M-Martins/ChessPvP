@@ -301,6 +301,7 @@ function movePiece(selectedPiece, targetPiece) {
         board[7][3] = new Piece("white", "\u2656", "rook");
         currentPlayer = currentPlayer === "white" ? "black" : "white";
         turnIndicator.textContent = `Current turn: ${currentPlayer}`;
+        wBigCasteling=false;wSmallCasteling=false;
     }
 
     function wSmallCasteling(){
@@ -323,6 +324,7 @@ function movePiece(selectedPiece, targetPiece) {
         board[7][5] = new Piece("white", "\u2656", "rook");
         currentPlayer = currentPlayer === "white" ? "black" : "white";
         turnIndicator.textContent = `Current turn: ${currentPlayer}`;
+        wBigCasteling=false;wSmallCasteling=false;
     }
 
     function bBigCasteling(){
@@ -345,6 +347,7 @@ function movePiece(selectedPiece, targetPiece) {
         board[0][3] = new Piece("black", "\u265C", "rook");
         currentPlayer = currentPlayer === "white" ? "black" : "white";
         turnIndicator.textContent = `Current turn: ${currentPlayer}`;
+        bBigCasteling=false;bSmallCasteling=false;
     }
 
     function bSmallCasteling(){
@@ -367,6 +370,7 @@ function movePiece(selectedPiece, targetPiece) {
         board[0][5] = new Piece("black", "\u265C", "rook");
         currentPlayer = currentPlayer === "white" ? "black" : "white";
         turnIndicator.textContent = `Current turn: ${currentPlayer}`;
+        bBigCasteling=false;bSmallCasteling=false;
     }
 }
 
