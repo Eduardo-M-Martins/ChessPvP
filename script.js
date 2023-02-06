@@ -208,14 +208,12 @@ function movePiece(selectedPiece, targetPiece) {
                 }
             }
         }
-        if (!queen) {
-            if (currentPlayer === "white") {
-                if (wBigCasteling && fromCol == 0) wBigCasteling = false;
-                if (wSmallCasteling && fromCol == 7) wSmallCasteling = false;
-            } else {
-                if (bBigCasteling && fromCol == 0) bBigCasteling = false;
-                if (bSmallCasteling && fromCol == 7) bSmallCasteling = false;
-            }
+        if (!queen && currentPlayer === "white") {
+            if (wBigCasteling && fromCol === 0) wBigCasteling = false;
+            if (wSmallCasteling && fromCol === 7) wSmallCasteling = false;
+        } else if (!queen) {
+            if (bBigCasteling && fromCol === 0) bBigCasteling = false;
+            if (bSmallCasteling && fromCol === 7) bSmallCasteling = false;
         }
         return true;
     }
@@ -230,7 +228,7 @@ function movePiece(selectedPiece, targetPiece) {
         if (Math.abs(fromRow - toRow) <= 1 && Math.abs(fromCol - toCol) <= 1) {
             currentPlayer === "white" ? (wBigCasteling = false, wSmallCasteling = false) : (bBigCasteling = false, bSmallCasteling = false);
             return true;
-        // Test if the castle move is possible
+            // Test if the castle move is possible
         } else if (testCasteling) {
             if (currentPlayer === "white") {
                 if (wBigCasteling && toRow == 7 && toCol == 2 && board[7][1].color === "" && board[7][2].color === "" && board[7][3].color === "")
@@ -334,6 +332,7 @@ const modal = document.querySelector('.modal-container')
 function openModal() {
     modal.classList.add('active')
 }
+
 function pawnToRook() {
     for (let i = 0; i < 8; i++) {
         if (board[0][i].type === "pawn") {
@@ -346,6 +345,7 @@ function pawnToRook() {
     updateBoard(board);
     modal.classList.remove('active')
 }
+
 function pawnToKnight() {
     for (let i = 0; i < 8; i++) {
         if (board[0][i].type === "pawn") {
@@ -358,6 +358,7 @@ function pawnToKnight() {
     updateBoard(board);
     modal.classList.remove('active')
 }
+
 function pawnToBishop() {
     for (let i = 0; i < 8; i++) {
         if (board[0][i].type === "pawn") {
@@ -370,6 +371,7 @@ function pawnToBishop() {
     updateBoard(board);
     modal.classList.remove('active')
 }
+
 function pawnToQueen() {
     for (let i = 0; i < 8; i++) {
         if (board[0][i].type === "pawn") {
