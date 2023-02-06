@@ -280,6 +280,10 @@ function movePiece(selectedPiece, targetPiece) {
             bBigCasteling = false;
             bSmallCasteling = false;
         }
+        currentPlayer = currentPlayer === "white" ? "black" : "white";
+        turnIndicator.textContent = `Current turn: ${currentPlayer}`;
+        isDraw();
+        isMate();
     }
 
     function isCheck() {
