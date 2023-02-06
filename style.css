@@ -115,7 +115,7 @@ span {
 }
 
 .btns button:hover {
-  background-color: darkgreen;
+    background-color: darkgreen;
 }
 
 @keyframes modal {
@@ -130,14 +130,15 @@ span {
     }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 600px) {
     .modal {
         padding: 10px;
         width: 80%;
+        height: 45%;
     }
 
     span,
     .btns button {
-        font-size: smaller;
+        font-size: 16;
     }
 }
