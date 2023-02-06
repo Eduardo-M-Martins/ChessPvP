@@ -384,3 +384,16 @@ function pawnToQueen() {
     updateBoard(board);
     modal.classList.remove('active')
 }
+
+// Show the winner screen, expect one parameter that indicate the winner (black, white or drawn)
+function gameWinner(winner) {
+    let screen = document.createElement("div");
+    screen.classList.add("result-screen");
+    screen.innerText = "Winner: "+winner;
+    document.body.appendChild(screen);
+    screen.appendChild(document.createElement("br"));
+    let refreshButton = document.createElement("button");
+    refreshButton.innerText = "Refresh";
+    refreshButton.setAttribute("onClick", "window.location.reload();");
+    screen.appendChild(refreshButton);
+}
