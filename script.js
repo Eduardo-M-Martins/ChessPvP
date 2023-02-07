@@ -1,6 +1,7 @@
 // Get the chess board element and create a div element to show the turn indicator
 const chessBoard = document.getElementById("chessBoard");
 const turnIndicator = document.createElement("h4");
+const modal = document.querySelector('.modal-container')
 
 // Set the text content, color, and alignment for the turn indicator and add it to the body
 turnIndicator.textContent = "Current turn: White";
@@ -14,10 +15,10 @@ let history = [];
 let selectedPiece = null;
 
 // Initialize the variables for the casteling control
-let wBigCasteling = true;
-let wSmallCasteling = true;
-let bBigCasteling = true;
-let bSmallCasteling = true;
+let wBigCastle = true;
+let wSmallCastle = true;
+let bBigCastle = true;
+let bSmallCastle = true;
 
 // Define the Piece class
 class Piece {
@@ -95,20 +96,21 @@ function handleClick(event) {
 }
 
 function movePiece(selectedPiece, targetPiece) {
-    const [fRow, fCol] = [selectedPiece.row, selectedPiece.col];
-    const [tRow, tCol] = [targetPiece.row, targetPiece.col];
+    const [fromRow, fromCol] = [selectedPiece.row, selectedPiece.col];
+    const [toRow, toCol] = [targetPiece.row, targetPiece.col];
     let move = false;
 
-    if (board[fRow][fCol].type === "pawn") move = pawnMove(board, fRow, fCol, tRow, tCol, currentPlayer, true);
-    else if (board[fRow][fCol].type === "knight") move = knightMove(board, fRow, fCol, tRow, tCol, true);
-    else if (board[fRow][fCol].type === "bishop") move = bishopMove(board, fRow, fCol, tRow, tCol, true);
-    else if (board[fRow][fCol].type === "rook") move = rookMove(board, fRow, fCol, tRow, tCol, false, true);
-    else if (board[fRow][fCol].type === "queen") move = queenMove(board, fRow, fCol, tRow, tCol, true);
-    else if (board[fRow][fCol].type === "king") move = kingMove(board, fRow, fCol, tRow, tCol, true, true);
+    if (board[fromRow][fromCol].type === "pawn") move = pawnMove(board, fromRow, fromCol, toRow, toCol, currentPlayer, true);
+    else if (board[fromRow][fromCol].type === "knight") move = knightMove(board, fromRow, fromCol, toRow, toCol, true);
+    else if (board[fromRow][fromCol].type === "bishop") move = bishopMove(board, fromRow, fromCol, toRow, toCol, true);
+    else if (board[fromRow][fromCol].type === "rook") move = rookMove(board, fromRow, fromCol, toRow, toCol, false, true);
+    else if (board[fromRow][fromCol].type === "queen") move = queenMove(board, fromRow, fromCol, toRow, toCol, true);
+    else if (board[fromRow][fromCol].type === "king") move = kingMove(board, fromRow, fromCol, toRow, toCol, true, true);
 
+    // If the movement is valid, do it
     if (move) {
-        board[tRow][tCol] = board[fRow][fCol];
-        board[fRow][fCol] = new Piece("", "  ", "");
+        board[toRow][toCol] = board[fromRow][fromCol];
+        board[fromRow][fromCol] = new Piece("", "  ", "");
         pawnToPiece();
         currentPlayer = currentPlayer === "white" ? "black" : "white";
         turnIndicator.textContent = `Current turn: ${currentPlayer}`;
@@ -116,140 +118,141 @@ function movePiece(selectedPiece, targetPiece) {
         isMate();
     }
 
-    function pawnMove(board, fromRow, fromCol, toRow, toCol, cPlayer, testCheck) {
-        const direction = cPlayer === "white" ? -1 : 1;
+    function pawnMove(thisBoard, fRow, fCol, tRow, tCol, player, testCheck) {
+        const direction = player === "white" ? -1 : 1;
         // First move
-        if ((fromRow + direction * 2 === toRow) && (fromCol === toCol)
-            && (fromRow === 1 || fromRow === 6)) {
-            if (!board[toRow][toCol].color && !board[toRow - direction][toCol].color)
-                if (testCheck) return !isCheck(board); else return true;
+        if ((fRow + direction * 2 === tRow) && (fCol === tCol)
+            && (fRow === 1 || fRow === 6)) {
+            if (!thisBoard[tRow][tCol].color && !thisBoard[tRow - direction][tCol].color)
+                if (testCheck) return !isCheck(thisBoard); else return true;
         }
         // Normal move
-        else if ((fromRow + direction === toRow) && (fromCol === toCol)
-            && !board[toRow][fromCol].color) {
-            if (testCheck) return !isCheck(board); else return true;
+        else if ((fRow + direction === tRow) && (fCol === tCol)
+            && !thisBoard[tRow][fCol].color) {
+            if (testCheck) return !isCheck(thisBoard); else return true;
         }
         // Capture move
-        else if ((fromRow + direction === toRow) &&
-            (fromCol + 1 === toCol || fromCol - 1 === toCol) && board[toRow][toCol].color !== ""
-            && board[toRow][toCol].color !== cPlayer) {
-            if (testCheck) return !isCheck(board); else return true;
+        else if ((fRow + direction === tRow) &&
+            (fCol + 1 === tCol || fCol - 1 === tCol) && thisBoard[tRow][tCol].color !== ""
+            && thisBoard[tRow][tCol].color !== player) {
+            if (testCheck) return !isCheck(thisBoard); else return true;
         }
         // En passant move
-        else if ((fromRow === 3 || fromRow === 4) && (fromCol + 1 === toCol || fromCol - 1 === toCol)
-            && board[fromRow][toCol].type === "pawn" && board[fromRow][toCol].color !== cPlayer
-            && (fromRow + direction === toRow) && (history[history.length - 2][toRow + direction][toCol].type == "pawn")
-            && (history[history.length - 1][toRow + direction][toCol].type == "")) {
-            board[fromRow][toCol] = new Piece("", "  ", "");
-            if (testCheck) return !isCheck(board); else return true;
+        else if ((fRow === 3 || fRow === 4) && (fCol + 1 === tCol || fCol - 1 === tCol)
+            && thisBoard[fRow][tCol].type === "pawn" && thisBoard[fRow][tCol].color !== player
+            && (fRow + direction === tRow) && (history[history.length - 2][tRow + direction][tCol].type == "pawn")
+            && (history[history.length - 1][tRow + direction][tCol].type == "")) {
+            thisBoard[fRow][tCol] = new Piece("", "  ", "");
+            if (testCheck) return !isCheck(thisBoard); else return true;
 
         }
         return false;
     }
 
-    function knightMove(board, fromRow, fromCol, toRow, toCol, testCheck) {
-        if ((Math.abs(fromRow - toRow) === 2 && Math.abs(fromCol - toCol) === 1) ||
-            (Math.abs(fromRow - toRow) === 1 && Math.abs(fromCol - toCol) === 2))
-            if (testCheck) return !isCheck(board); else return true;
+    function knightMove(thisBoard, fRow, fCol, tRow, tCol, testCheck) {
+        if ((Math.abs(fRow - tRow) === 2 && Math.abs(fCol - tCol) === 1) ||
+            (Math.abs(fRow - tRow) === 1 && Math.abs(fCol - tCol) === 2))
+            if (testCheck) return !isCheck(thisBoard); else return true;
         return false;
     }
 
-    function bishopMove(board, fromRow, fromCol, toRow, toCol, testCheck) {
+    function bishopMove(thisBoard, fRow, fCol, tRow, tCol, testCheck) {
         // Check if the move is a diagonal move
-        if (Math.abs(fromRow - toRow) !== Math.abs(fromCol - toCol)) return false;
+        if (Math.abs(fRow - tRow) !== Math.abs(fCol - tCol)) return false;
         // Check if the path to the target is clear
-        let rowStep = (toRow - fromRow) / Math.abs(toRow - fromRow);
-        let colStep = (toCol - fromCol) / Math.abs(toCol - fromCol);
-        let currentRow = fromRow + rowStep;
-        let currentCol = fromCol + colStep;
-        while (currentRow !== toRow || currentCol !== toCol) {
-            if (board[currentRow][currentCol].type !== "") return false;
-            currentRow += rowStep;
-            currentCol += colStep;
+        let rowStep = (tRow - fRow) / Math.abs(tRow - fRow);
+        let colStep = (tCol - fCol) / Math.abs(tCol - fCol);
+        let row = fRow + rowStep;
+        let col = fCol + colStep;
+        while (row !== tRow || col !== tCol) {
+            if (thisBoard[row][col].type !== "") return false;
+            row += rowStep;
+            col += colStep;
         }
-        if (testCheck) return !isCheck(board); else return true;
+        if (testCheck) return !isCheck(thisBoard); else return true;
     }
 
-    function rookMove(board, fromRow, fromCol, toRow, toCol, isQueen, testCheck) {
+    function rookMove(thisBoard, fRow, fCol, tRow, tCol, isQueen, testCheck) {
         // Check if the move is vertical or horizontal
-        if (fromRow !== toRow && fromCol !== toCol) {
+        if (fRow !== tRow && fCol !== tCol) {
             return false;
         }
         // Check if the path to the target is clear
-        if (fromRow === toRow) {
-            const start = Math.min(fromCol, toCol) + 1;
-            const end = Math.max(fromCol, toCol);
+        if (fRow === tRow) {
+            const start = Math.min(fCol, tCol) + 1;
+            const end = Math.max(fCol, tCol);
             for (let i = start; i < end; i++) {
-                if (board[fromRow][i].color !== "") {
+                if (thisBoard[fRow][i].color !== "") {
                     return false;
                 }
             }
-        } else if (fromCol === toCol) {
-            const start = Math.min(fromRow, toRow) + 1;
-            const end = Math.max(fromRow, toRow);
+        } else if (fCol === tCol) {
+            const start = Math.min(fRow, tRow) + 1;
+            const end = Math.max(fRow, tRow);
             for (let i = start; i < end; i++) {
-                if (board[i][fromCol].color !== "") {
+                if (thisBoard[i][fCol].color !== "") {
                     return false;
                 }
             }
         }
+        // Disables castling when moving the rook
         if (!isQueen && currentPlayer === "white") {
-            if (wBigCasteling && fromCol === 0) wBigCasteling = false;
-            if (wSmallCasteling && fromCol === 7) wSmallCasteling = false;
+            if (wBigCastle && fCol === 0) wBigCastle = false;
+            if (wSmallCastle && fCol === 7) wSmallCastle = false;
         } else if (!isQueen) {
-            if (bBigCasteling && fromCol === 0) bBigCasteling = false;
-            if (bSmallCasteling && fromCol === 7) bSmallCasteling = false;
+            if (bBigCastle && fCol === 0) bBigCastle = false;
+            if (bSmallCastle && fCol === 7) bSmallCastle = false;
         }
-        if (testCheck) return !isCheck(board); else return true;
+        if (testCheck) return !isCheck(thisBoard); else return true;
     }
 
-    function queenMove(board, fromRow, fromCol, toRow, toCol, testCheck) {
-        if (rookMove(board, fromRow, fromCol, toRow, toCol, true, testCheck)) return true;
-        return bishopMove(board, fromRow, fromCol, toRow, toCol, testCheck);
+    function queenMove(thisBoard, fRow, fCol, tRow, tCol, testCheck) {
+        if (rookMove(thisBoard, fRow, fCol, tRow, tCol, true, testCheck)) return true;
+        return bishopMove(thisBoard, fRow, fCol, tRow, tCol, testCheck);
     }
 
-    function kingMove(board, fromRow, fromCol, toRow, toCol, testCasteling, testCheck) {
+    function kingMove(thisBoard, fRow, fCol, tRow, tCol, testCasteling, testCheck) {
         // The king can move one square in any direction
-        if (Math.abs(fromRow - toRow) <= 1 && Math.abs(fromCol - toCol) <= 1) {
-            currentPlayer === "white" ? (wBigCasteling = false, wSmallCasteling = false) : (bBigCasteling = false, bSmallCasteling = false);
-            if (testCheck) return !isCheck(board); else return true;
-            // Test if the castle move is possible
+        if (Math.abs(fRow - tRow) <= 1 && Math.abs(fCol - tCol) <= 1) {
+            currentPlayer === "white" ? (wBigCastle = false, wSmallCastle = false) : (bBigCastle = false, bSmallCastle = false);
+            if (testCheck) return !isCheck(thisBoard); else return true;
+            // Test if the castling move is possible
         } else if (testCasteling) {
             if (currentPlayer === "white") {
-                if (wBigCasteling && toRow == 7 && toCol == 2 && board[7][1].color === "" && board[7][2].color === "" && board[7][3].color === "")
+                if (wBigCastle && tRow == 7 && tCol == 2 && thisBoard[7][1].color === "" && thisBoard[7][2].color === "" && thisBoard[7][3].color === "")
                     castleMove("white", "big");
-                else if (wSmallCasteling && toRow == 7 && toCol == 6 && board[7][5].color === "" && board[7][6].color === "")
+                else if (wSmallCastle && tRow == 7 && tCol == 6 && thisBoard[7][5].color === "" && thisBoard[7][6].color === "")
                     castleMove("white", "small");
-            } else if (bBigCasteling && toRow == 0 && toCol == 2 && board[0][1].color === "" && board[0][2].color === "" && board[0][3].color === "")
+            } else if (bBigCastle && tRow == 0 && tCol == 2 && thisBoard[0][1].color === "" && thisBoard[0][2].color === "" && thisBoard[0][3].color === "")
                 castleMove("black", "big");
-            else if (bSmallCasteling && toRow == 0 && toCol == 6 && board[0][5].color === "" && board[0][6].color === "")
+            else if (bSmallCastle && tRow == 0 && tCol == 6 && thisBoard[0][5].color === "" && thisBoard[0][6].color === "")
                 castleMove("black", "small");
         }
         return false;
     }
 
-    function castleMove(color, bigOrSmall) {
+    function castleMove(color, side) {
         let otherPlayer = currentPlayer === "white" ? "black" : "white";
         let row = color === "white" ? 7 : 0;
         let king = color === "white" ? "\u2654" : "\u265A";
         let rook = color === "white" ? "\u2656" : "\u265C";
-        let spaces = bigOrSmall === "big" ? [2, 3, 4] : [4, 5, 6];
-        for (let space of spaces) {
+        let columns = side === "big" ? [2, 3, 4] : [4, 5, 6];
+        for (let col of columns) {
             for (let i = 0; i < 8; i++) {
                 for (let j = 0; j < 8; j++) {
                     if (board[i][j].color !== currentPlayer) {
-                        if (board[i][j].type === "pawn") { if (pawnMove(board, i, j, row, space, otherPlayer, false)) return; }
-                        else if (board[i][j].type === "knight") { if (knightMove(board, i, j, row, space, false)) return; }
-                        else if (board[i][j].type === "bishop") { if (bishopMove(board, i, j, row, space, false)) return; }
-                        else if (board[i][j].type === "rook") { if (rookMove(board, i, j, row, space, false, false)) return; }
-                        else if (board[i][j].type === "queen") { if (queenMove(board, i, j, row, space, false)) return; }
-                        else if (board[i][j].type === "king") { if (kingMove(board, i, j, row, space, false, false)) return; }
+                        if (board[i][j].type === "pawn") { if (pawnMove(board, i, j, row, col, otherPlayer, false)) return; }
+                        else if (board[i][j].type === "knight") { if (knightMove(board, i, j, row, col, false)) return; }
+                        else if (board[i][j].type === "bishop") { if (bishopMove(board, i, j, row, col, false)) return; }
+                        else if (board[i][j].type === "rook") { if (rookMove(board, i, j, row, col, false, false)) return; }
+                        else if (board[i][j].type === "queen") { if (queenMove(board, i, j, row, col, false)) return; }
+                        else if (board[i][j].type === "king") { if (kingMove(board, i, j, row, col, false, false)) return; }
                     }
                 }
             }
         }
         board[row][4] = new Piece("", "  ", "");
-        if (bigOrSmall === "big") {
+        if (side === "big") {
             board[row][0] = new Piece("", "  ", "");
             board[row][2] = new Piece(color, king, "king");
             board[row][3] = new Piece(color, rook, "rook");
@@ -259,11 +262,11 @@ function movePiece(selectedPiece, targetPiece) {
             board[row][5] = new Piece(color, rook, "rook");
         }
         if (color === "white") {
-            wBigCasteling = false;
-            wSmallCasteling = false;
+            wBigCastle = false;
+            wSmallCastle = false;
         } else {
-            bBigCasteling = false;
-            bSmallCasteling = false;
+            bBigCastle = false;
+            bSmallCastle = false;
         }
         currentPlayer = currentPlayer === "white" ? "black" : "white";
         turnIndicator.textContent = `Current turn: ${currentPlayer}`;
@@ -272,23 +275,23 @@ function movePiece(selectedPiece, targetPiece) {
     }
 
     function isCheck(board) {
-        let testBoard = [];
+        let thisBoard = [];
         for (let i = 0; i < 8; i++) {
-            testBoard[i] = [];
+            thisBoard[i] = [];
             for (let j = 0; j < 8; j++) {
-                testBoard[i][j] = board[i][j];
+                thisBoard[i][j] = board[i][j];
             }
         }
-        let kingRow;
-        let kingCol;
-        testBoard[tRow][tCol] = testBoard[fRow][fCol];
-        testBoard[fRow][fCol] = new Piece("", "  ", "");
+        let kRow;
+        let kCol;
+        thisBoard[toRow][toCol] = thisBoard[fromRow][fromCol];
+        thisBoard[fromRow][fromCol] = new Piece("", "  ", "");
         // Find the location of the king of the current player
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
-                if (testBoard[i][j].type === "king" && testBoard[i][j].color === currentPlayer) {
-                    kingRow = i;
-                    kingCol = j;
+                if (thisBoard[i][j].type === "king" && thisBoard[i][j].color === currentPlayer) {
+                    kRow = i;
+                    kCol = j;
                     break;
                 }
             }
@@ -297,13 +300,13 @@ function movePiece(selectedPiece, targetPiece) {
         otherPlayer = currentPlayer === "white" ? "black" : "white";
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
-                if (testBoard[i][j].color !== currentPlayer) {
-                    if (testBoard[i][j].type === "pawn") { if (pawnMove(testBoard, i, j, kingRow, kingCol, otherPlayer, false)) return true; }
-                    else if (testBoard[i][j].type === "knight") { if (knightMove(testBoard, i, j, kingRow, kingCol, false)) return true; }
-                    else if (testBoard[i][j].type === "bishop") { if (bishopMove(testBoard, i, j, kingRow, kingCol, false)) return true; }
-                    else if (testBoard[i][j].type === "rook") { if (rookMove(testBoard, i, j, kingRow, kingCol, false, false)) return true; }
-                    else if (testBoard[i][j].type === "queen") { if (queenMove(testBoard, i, j, kingRow, kingCol, false)) return true; }
-                    else if (testBoard[i][j].type === "king") { if (kingMove(testBoard, i, j, kingRow, kingCol, false, false)) return true; }
+                if (thisBoard[i][j].color !== currentPlayer) {
+                    if (thisBoard[i][j].type === "pawn") { if (pawnMove(thisBoard, i, j, kRow, kCol, otherPlayer, false)) return true; }
+                    else if (thisBoard[i][j].type === "knight") { if (knightMove(thisBoard, i, j, kRow, kCol, false)) return true; }
+                    else if (thisBoard[i][j].type === "bishop") { if (bishopMove(thisBoard, i, j, kRow, kCol, false)) return true; }
+                    else if (thisBoard[i][j].type === "rook") { if (rookMove(thisBoard, i, j, kRow, kCol, false, false)) return true; }
+                    else if (thisBoard[i][j].type === "queen") { if (queenMove(thisBoard, i, j, kRow, kCol, false)) return true; }
+                    else if (thisBoard[i][j].type === "king") { if (kingMove(thisBoard, i, j, kRow, kCol, false, false)) return true; }
                 }
             }
         }
@@ -316,17 +319,16 @@ function movePiece(selectedPiece, targetPiece) {
             if (board[7][i].type === "pawn") openModal();
         }
     }
+
+    function isMate() {
+
+    }
+
+    function isDraw() {
+
+    }
 }
 
-function isDraw() {
-
-}
-
-function isMate() {
-
-}
-
-const modal = document.querySelector('.modal-container')
 function openModal() {
     modal.classList.add('active')
 }
