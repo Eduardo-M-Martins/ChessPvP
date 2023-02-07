@@ -80,12 +80,16 @@ function updateBoard(board) {
 
 // Handle the click event
 function handleClick(event) {
-    // Get the row and column of the clicked cell
+    // Get the row and column of the clicked cell and change the color of pieces
     const row = event.target.parentNode.rowIndex;
     const col = event.target.cellIndex;
+    for (let i = 0; i < document.getElementsByTagName("td").length; i++) {
+        document.getElementsByTagName("td")[i].classList.remove("piece-selected");
+    }
 
     if (board[row][col].color === currentPlayer) {
         selectedPiece = { row, col };
+        event.target.classList.add("piece-selected");
     } else {
         if (!selectedPiece) return;
         const targetPiece = { row, col };
@@ -405,4 +409,17 @@ function pawnToQueen() {
     }
     updateBoard(board);
     modal.classList.remove('active')
+}
+
+// Show the winner screen, expect one parameter that indicate the winner (black, white or drawn)
+function gameWinner(winner) {
+    let screen = document.createElement("div");
+    screen.classList.add("result-screen");
+    screen.innerText = "Winner: "+winner;
+    document.body.appendChild(screen);
+    screen.appendChild(document.createElement("br"));
+    let refreshButton = document.createElement("button");
+    refreshButton.innerText = "Refresh";
+    refreshButton.setAttribute("onClick", "window.location.reload();");
+    screen.appendChild(refreshButton);
 }

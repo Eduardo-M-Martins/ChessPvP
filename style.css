@@ -66,6 +66,10 @@ span {
     background-color: white;
 }
 
+.piece-selected {
+    color: blue;
+}
+
 .modal-container {
     width: 100vw;
     height: 100vw;
@@ -116,6 +120,28 @@ span {
 
 .btns button:hover {
     background-color: darkgreen;
+}
+
+.result-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.8);
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    line-height: 400px;
+    color: white;
+    font-size: 28pt;
+    font-weight: bold;
+}
+
+.result-screen button {
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 40pt;
 }
 
 @keyframes modal {
