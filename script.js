@@ -15,10 +15,8 @@ let history = [];
 let selectedPiece = null;
 
 // Initialize the variables for the casteling control
-let wBigCastle = true;
-let wSmallCastle = true;
-let bBigCastle = true;
-let bSmallCastle = true;
+let wBigCastle = true, wSmallCastle = true, bBigCastle = true, bSmallCastle = true;
+let wBigCastleAt = null, bBigCastleAt = null, wSmallCastleAt = null, bSmallCastleAt = null;
 
 // Define the Piece class
 class Piece {
@@ -116,7 +114,7 @@ function movePiece(selectedPiece, targetPiece) {
         pawnToPiece();
         currentPlayer = currentPlayer === "White" ? "Black" : "White";
         turnIndicator.textContent = `Current turn: ${currentPlayer}`;
-        if(!(toRow==0||toRow==7&&board[toRow][toCol].type==="pawn")) updateBoard(board, true);
+        if (!(toRow == 0 || toRow == 7 && board[toRow][toCol].type === "pawn")) updateBoard(board, true);
         isTheEnd();
     }
 
@@ -199,11 +197,23 @@ function movePiece(selectedPiece, targetPiece) {
         }
         // Disables castling when moving the rook
         if (!isQueen && currentPlayer === "White") {
-            if (wBigCastle && fCol === 0) wBigCastle = false;
-            if (wSmallCastle && fCol === 7) wSmallCastle = false;
+            if (wBigCastle && fCol === 0) {
+                wBigCastle = false;
+                if (!wBigCastleAt) wBigCastleAt = history.length;
+            }
+            if (wSmallCastle && fCol === 7) {
+                wSmallCastle = false;
+                if (!wSmallCastleAt) wSmallCastleAt = history.length;
+            }
         } else if (!isQueen) {
-            if (bBigCastle && fCol === 0) bBigCastle = false;
-            if (bSmallCastle && fCol === 7) bSmallCastle = false;
+            if (bBigCastle && fCol === 0) {
+                bBigCastle = false;
+                if (!bBigCastleAt) bBigCastleAt = history.length;
+            }
+            if (bSmallCastle && fCol === 7) {
+                bSmallCastle = false;
+                if (!bSmallCastleAt) bSmallCastleAt = history.length;
+            }
         }
         if (testCheck) return !isCheck(thisBoard, fRow, fCol, tRow, tCol); else return true;
     }
@@ -217,6 +227,10 @@ function movePiece(selectedPiece, targetPiece) {
         // The king can move one square in any direction
         if (Math.abs(fRow - tRow) <= 1 && Math.abs(fCol - tCol) <= 1) {
             currentPlayer === "White" ? (wBigCastle = false, wSmallCastle = false) : (bBigCastle = false, bSmallCastle = false);
+            if (currentPlayer === "White" && !wBigCastleAt) wBigCastleAt = history.length;
+            if (currentPlayer === "White" && !wSmallCastleAt) wSmallCastleAt = history.length;
+            if (currentPlayer === "Black" && !bBigCastleAt) bBigCastleAt = history.length;
+            if (currentPlayer === "Black" && !bSmallCastleAt) bSmallCastleAt = history.length;
             if (testCheck) return !isCheck(thisBoard, fRow, fCol, tRow, tCol); else return true;
             // Test if the castling move is possible
         } else if (testCasteling) {
@@ -264,6 +278,10 @@ function movePiece(selectedPiece, targetPiece) {
             board[row][5] = new Piece(color, rook, "rook");
         }
         color === "White" ? (wBigCastle = false, wSmallCastle = false) : (bBigCastle = false, bSmallCastle = false);
+        if (color === "White" && !wBigCastleAt) wBigCastleAt = history.length;
+        if (color === "White" && !wSmallCastleAt) wSmallCastleAt = history.length;
+        if (color === "Black" && !bBigCastleAt) bBigCastleAt = history.length;
+        if (color === "Black" && !bSmallCastleAt) bSmallCastleAt = history.length;
         currentPlayer = currentPlayer === "White" ? "Black" : "White";
         turnIndicator.textContent = `Current turn: ${currentPlayer}`;
         updateBoard(board, true);
@@ -432,9 +450,13 @@ function undo() {
         history.length = history.length - 1;
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
-                board[i][j] = history[history.length-1][i][j];
+                board[i][j] = history[history.length - 1][i][j];
             }
         }
+        if (history.length == wBigCastleAt) { wBigCastle = true; wBigCastleAt = null; }
+        if (history.length == bBigCastleAt) { bBigCastle = true; bBigCastleAt = null; }
+        if (history.length == wSmallCastleAt) { wSmallCastle = true; wSmallCastleAt = null; }
+        if (history.length == bSmallCastleAt) { bSmallCastle = true; bSmallCastleAt = null; }
         updateBoard(board, false);
         currentPlayer = currentPlayer === "White" ? "Black" : "White";
         turnIndicator.textContent = `Current turn: ${currentPlayer}`;
