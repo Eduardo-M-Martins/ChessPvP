@@ -122,6 +122,41 @@ span {
     background-color: darkgreen;
 }
 
+.btns {
+    width: 20%;
+    position: fixed;
+    top: 40%;
+    left: 10%;
+    text-align: right;
+}
+
+.btn-refresh {
+    font-size: 24;
+    font-family: Courier New, monospace;
+    padding: 10px;
+    border: 2px solid black;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    background-color: green;
+    font-weight: bold;
+    user-select: none;
+    margin-bottom: 10px;
+}
+
+.btn-undo {
+    font-size: 24;
+    font-family: Courier New, monospace;
+    padding: 10px;
+    border: 2px solid black;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    background-color: green;
+    font-weight: bold;
+    user-select: none;
+}
+
 @keyframes modal {
     from {
         opacity: 0;
