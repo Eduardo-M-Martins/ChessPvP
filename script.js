@@ -343,7 +343,7 @@ function movePiece(selectedPiece, targetPiece) {
         }
         otherPlayer = currentPlayer === "White" ? "Black" : "White";
         if (isCheck(board, 0, 0, 0, 0)) endModal(otherPlayer);
-        else endModal("Darw");
+        else endModal("Draw");
     }
 }
 
