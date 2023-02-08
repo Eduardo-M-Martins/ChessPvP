@@ -51,10 +51,10 @@ for (let i = 0; i < 8; i++) {
         } else board[i][j] = new Piece("", "  ", "");
     }
 }
-updateBoard(board);
+updateBoard(board, true);
 
 // Function to update the board
-function updateBoard(board) {
+function updateBoard(board, save) {
     let currentBoard = [];
     for (let i = 0; i < 8; i++) {
         currentBoard[i] = [];
@@ -62,7 +62,7 @@ function updateBoard(board) {
             currentBoard[i][j] = board[i][j];
         }
     }
-    history.push(currentBoard);
+    if (save) history.push(currentBoard);
 
     while (chessBoard.hasChildNodes()) {
         chessBoard.removeChild(chessBoard.firstChild);
@@ -116,7 +116,7 @@ function movePiece(selectedPiece, targetPiece) {
         pawnToPiece();
         currentPlayer = currentPlayer === "White" ? "Black" : "White";
         turnIndicator.textContent = `Current turn: ${currentPlayer}`;
-        updateBoard(board);
+        if(!(toRow==0||toRow==7&&board[toRow][toCol].type==="pawn")) updateBoard(board, true);
         isTheEnd();
     }
 
@@ -266,7 +266,7 @@ function movePiece(selectedPiece, targetPiece) {
         color === "White" ? (wBigCastle = false, wSmallCastle = false) : (bBigCastle = false, bSmallCastle = false);
         currentPlayer = currentPlayer === "White" ? "Black" : "White";
         turnIndicator.textContent = `Current turn: ${currentPlayer}`;
-        updateBoard(board);
+        updateBoard(board, true);
         isTheEnd();
     }
 
@@ -376,7 +376,7 @@ function pawnToRook() {
             board[7][i] = new Piece("Black", "\u265C", "rook");
         }
     }
-    updateBoard(board);
+    updateBoard(board, true);
     modal.classList.remove('active')
 }
 
@@ -389,7 +389,7 @@ function pawnToKnight() {
             board[7][i] = new Piece("Black", "\u265E", "knight");
         }
     }
-    updateBoard(board);
+    updateBoard(board, true);
     modal.classList.remove('active')
 }
 
@@ -402,7 +402,7 @@ function pawnToBishop() {
             board[7][i] = new Piece("Black", "\u265D", "bishop");
         }
     }
-    updateBoard(board);
+    updateBoard(board, true);
     modal.classList.remove('active')
 }
 
@@ -415,7 +415,7 @@ function pawnToQueen() {
             board[7][i] = new Piece("Black", "\u265B", "queen");
         }
     }
-    updateBoard(board);
+    updateBoard(board, true);
     modal.classList.remove('active');
 }
 
@@ -427,6 +427,16 @@ function refresh() {
     window.location.reload();
 }
 
-function undo(){
-    
+function undo() {
+    if (history.length > 1) {
+        history.length = history.length - 1;
+        for (let i = 0; i < 8; i++) {
+            for (let j = 0; j < 8; j++) {
+                board[i][j] = history[history.length-1][i][j];
+            }
+        }
+        updateBoard(board, false);
+        currentPlayer = currentPlayer === "White" ? "Black" : "White";
+        turnIndicator.textContent = `Current turn: ${currentPlayer}`;
+    }
 }
