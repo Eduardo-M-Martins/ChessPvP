@@ -263,13 +263,7 @@ function movePiece(selectedPiece, targetPiece) {
             board[row][6] = new Piece(color, king, "king");
             board[row][5] = new Piece(color, rook, "rook");
         }
-        if (color === "White") {
-            wBigCastle = false;
-            wSmallCastle = false;
-        } else {
-            bBigCastle = false;
-            bSmallCastle = false;
-        }
+        color === "White" ? (wBigCastle = false, wSmallCastle = false) : (bBigCastle = false, bSmallCastle = false);
         currentPlayer = currentPlayer === "White" ? "Black" : "White";
         turnIndicator.textContent = `Current turn: ${currentPlayer}`;
         updateBoard(board);
@@ -431,4 +425,8 @@ function closeBtn() {
 
 function refresh() {
     window.location.reload();
+}
+
+function undo(){
+    
 }

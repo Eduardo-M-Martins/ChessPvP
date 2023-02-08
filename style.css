@@ -99,13 +99,13 @@ span {
     animation: modal .5s;
 }
 
-.btns {
+.modal-btns {
     display: flex;
     justify-content: space-between;
     margin-top: 10px;
 }
 
-.btns button {
+.modal-btns button {
     font-size: 16;
     font-family: Courier New, monospace;
     padding: 10px;
@@ -118,7 +118,7 @@ span {
     user-select: none;
 }
 
-.btns button:hover {
+.modal-btns button:hover {
     background-color: darkgreen;
 }
 
@@ -142,7 +142,7 @@ span {
     }
 
     span,
-    .btns button {
+    .modal-btns button {
         font-size: 16;
     }
 }
