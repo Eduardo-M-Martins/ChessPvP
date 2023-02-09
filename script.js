@@ -100,7 +100,7 @@ function movePiece(selectedPiece, targetPiece) {
     const [toRow, toCol] = [targetPiece.row, targetPiece.col];
     let move = false;
 
-    if (board[fromRow][fromCol].type === "pawn") move = pawnMove(board, fromRow, fromCol, toRow, toCol, currentPlayer, true);
+    if (board[fromRow][fromCol].type === "pawn") move = pawnMove(board, fromRow, fromCol, toRow, toCol, currentPlayer, true, true);
     else if (board[fromRow][fromCol].type === "knight") move = knightMove(board, fromRow, fromCol, toRow, toCol, true);
     else if (board[fromRow][fromCol].type === "bishop") move = bishopMove(board, fromRow, fromCol, toRow, toCol, true);
     else if (board[fromRow][fromCol].type === "rook") move = rookMove(board, fromRow, fromCol, toRow, toCol, false, true, true);
@@ -118,7 +118,7 @@ function movePiece(selectedPiece, targetPiece) {
         isTheEnd();
     }
 
-    function pawnMove(thisBoard, fRow, fCol, tRow, tCol, player, testCheck) {
+    function pawnMove(thisBoard, fRow, fCol, tRow, tCol, player, enPassant, testCheck) {
         const direction = player === "White" ? -1 : 1;
         // First move
         if ((fRow + direction * 2 === tRow) && (fCol === tCol)
@@ -138,13 +138,12 @@ function movePiece(selectedPiece, targetPiece) {
             if (testCheck) return !isCheck(thisBoard, fRow, fCol, tRow, tCol); else return true;
         }
         // En passant move
-        else if ((fRow === 3 || fRow === 4) && (fCol + 1 === tCol || fCol - 1 === tCol)
+        else if (((fRow === 3 && player === "White") || (fRow === 4 && player === "Black")) && (fCol + 1 === tCol || fCol - 1 === tCol)
             && thisBoard[fRow][tCol].type === "pawn" && thisBoard[fRow][tCol].color !== player
             && (fRow + direction === tRow) && (history[history.length - 2][tRow + direction][tCol].type == "pawn")
             && (history[history.length - 1][tRow + direction][tCol].type == "")) {
-            thisBoard[fRow][tCol] = new Piece("", "  ", "");
+            if(enPassant){thisBoard[fRow][tCol] = new Piece("", "  ", "");}
             if (testCheck) return !isCheck(thisBoard, fRow, fCol, tRow, tCol); else return true;
-
         }
         return false;
     }
@@ -259,7 +258,7 @@ function movePiece(selectedPiece, targetPiece) {
             for (let i = 0; i < 8; i++) {
                 for (let j = 0; j < 8; j++) {
                     if (board[i][j].color !== currentPlayer) {
-                        if (board[i][j].type === "pawn") { if (pawnMove(board, i, j, row, col, otherPlayer, false)) return; }
+                        if (board[i][j].type === "pawn") { if (pawnMove(board, i, j, row, col, otherPlayer, false, false)) return; }
                         else if (board[i][j].type === "knight") { if (knightMove(board, i, j, row, col, false)) return; }
                         else if (board[i][j].type === "bishop") { if (bishopMove(board, i, j, row, col, false)) return; }
                         else if (board[i][j].type === "rook") { if (rookMove(board, i, j, row, col, false, false, false)) return; }
@@ -317,7 +316,7 @@ function movePiece(selectedPiece, targetPiece) {
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
                 if (thisBoard[i][j].color !== currentPlayer) {
-                    if (thisBoard[i][j].type === "pawn") { if (pawnMove(thisBoard, i, j, kRow, kCol, otherPlayer, false)) return true; }
+                    if (thisBoard[i][j].type === "pawn") { if (pawnMove(thisBoard, i, j, kRow, kCol, otherPlayer, false, false)) return true; }
                     else if (thisBoard[i][j].type === "knight") { if (knightMove(thisBoard, i, j, kRow, kCol, false)) return true; }
                     else if (thisBoard[i][j].type === "bishop") { if (bishopMove(thisBoard, i, j, kRow, kCol, false)) return true; }
                     else if (thisBoard[i][j].type === "rook") { if (rookMove(thisBoard, i, j, kRow, kCol, false, false, false)) return true; }
@@ -348,7 +347,7 @@ function movePiece(selectedPiece, targetPiece) {
                                 else if (board[i][j].type === "bishop") { if (bishopMove(board, i, j, k, l, true)) return; }
                                 else if (board[i][j].type === "queen") { if (queenMove(board, i, j, k, l, true)) return; }
                                 else if (board[i][j].type === "king") { if (kingMove(board, i, j, k, l, false, true)) return; }
-                                else if (board[i][j].type === "pawn") { if (pawnMove(board, i, j, k, l, currentPlayer, true)) return; }
+                                else if (board[i][j].type === "pawn") { if (pawnMove(board, i, j, k, l, currentPlayer, false, true)) return; }
                             }
                         }
                     }
