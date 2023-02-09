@@ -103,7 +103,7 @@ function movePiece(selectedPiece, targetPiece) {
     if (board[fromRow][fromCol].type === "pawn") move = pawnMove(board, fromRow, fromCol, toRow, toCol, currentPlayer, true, true);
     else if (board[fromRow][fromCol].type === "knight") move = knightMove(board, fromRow, fromCol, toRow, toCol, true);
     else if (board[fromRow][fromCol].type === "bishop") move = bishopMove(board, fromRow, fromCol, toRow, toCol, true);
-    else if (board[fromRow][fromCol].type === "rook") move = rookMove(board, fromRow, fromCol, toRow, toCol, false, true, true);
+    else if (board[fromRow][fromCol].type === "rook") move = rookMove(board, fromRow, fromCol, toRow, toCol, true, true);
     else if (board[fromRow][fromCol].type === "queen") move = queenMove(board, fromRow, fromCol, toRow, toCol, true);
     else if (board[fromRow][fromCol].type === "king") move = kingMove(board, fromRow, fromCol, toRow, toCol, true, true);
 
@@ -118,24 +118,26 @@ function movePiece(selectedPiece, targetPiece) {
         isTheEnd();
     }
 
+    console.log(wBigCastle+" "+wSmallCastle+" "+bBigCastle+" "+bSmallCastle);
+
     function pawnMove(thisBoard, fRow, fCol, tRow, tCol, player, enPassant, testCheck) {
         const direction = player === "White" ? -1 : 1;
         // First move
         if ((fRow + direction * 2 === tRow) && (fCol === tCol)
             && (fRow === 1 || fRow === 6)) {
             if (!thisBoard[tRow][tCol].color && !thisBoard[tRow - direction][tCol].color)
-                if (testCheck) return !isCheck(thisBoard, fRow, fCol, tRow, tCol); else return true;
+                if (testCheck) return !isCheck(thisBoard, fRow, fCol, tRow, tCol, false); else return true;
         }
         // Normal move
         else if ((fRow + direction === tRow) && (fCol === tCol)
             && !thisBoard[tRow][fCol].color) {
-            if (testCheck) return !isCheck(thisBoard, fRow, fCol, tRow, tCol); else return true;
+            if (testCheck) return !isCheck(thisBoard, fRow, fCol, tRow, tCol, false); else return true;
         }
         // Capture move
         else if ((fRow + direction === tRow) &&
             (fCol + 1 === tCol || fCol - 1 === tCol) && thisBoard[tRow][tCol].color !== ""
             && thisBoard[tRow][tCol].color !== player) {
-            if (testCheck) return !isCheck(thisBoard, fRow, fCol, tRow, tCol); else return true;
+            if (testCheck) return !isCheck(thisBoard, fRow, fCol, tRow, tCol, false); else return true;
         }
         // En passant move
         else if (((fRow === 3 && player === "White") || (fRow === 4 && player === "Black")) && (fCol + 1 === tCol || fCol - 1 === tCol)
@@ -143,7 +145,7 @@ function movePiece(selectedPiece, targetPiece) {
             && (fRow + direction === tRow) && (history[history.length - 2][tRow + direction][tCol].type == "pawn")
             && (history[history.length - 1][tRow + direction][tCol].type == "")) {
             if (enPassant) { thisBoard[fRow][tCol] = new Piece("", "  ", ""); }
-            if (testCheck) return !isCheck(thisBoard, fRow, fCol, tRow, tCol); else return true;
+            if (testCheck) return !isCheck(thisBoard, fRow, fCol, tRow, tCol, false); else return true;
         }
         return false;
     }
@@ -151,7 +153,7 @@ function movePiece(selectedPiece, targetPiece) {
     function knightMove(thisBoard, fRow, fCol, tRow, tCol, testCheck) {
         if ((Math.abs(fRow - tRow) === 2 && Math.abs(fCol - tCol) === 1) ||
             (Math.abs(fRow - tRow) === 1 && Math.abs(fCol - tCol) === 2))
-            if (testCheck) return !isCheck(thisBoard, fRow, fCol, tRow, tCol); else return true;
+            if (testCheck) return !isCheck(thisBoard, fRow, fCol, tRow, tCol, false); else return true;
         return false;
     }
 
@@ -168,10 +170,10 @@ function movePiece(selectedPiece, targetPiece) {
             row += rowStep;
             col += colStep;
         }
-        if (testCheck) return !isCheck(thisBoard, fRow, fCol, tRow, tCol); else return true;
+        if (testCheck) return !isCheck(thisBoard, fRow, fCol, tRow, tCol, false); else return true;
     }
 
-    function rookMove(thisBoard, fRow, fCol, tRow, tCol, isQueen, testCasteling, testCheck) {
+    function rookMove(thisBoard, fRow, fCol, tRow, tCol, testCasteling, testCheck) {
         // Check if the move is vertical or horizontal
         if (fRow !== tRow && fCol !== tCol) {
             return false;
@@ -195,44 +197,18 @@ function movePiece(selectedPiece, targetPiece) {
             }
         }
         // Disables castling when moving the rook
-        if (testCasteling) {
-            if (!isQueen && currentPlayer === "White") {
-                if (wBigCastle && fCol === 0) {
-                    wBigCastle = false;
-                    if (!wBigCastleAt) { wBigCastleAt = history.length; }
-                }
-                if (wSmallCastle && fCol === 7) {
-                    wSmallCastle = false;
-                    if (!wSmallCastleAt) { wSmallCastleAt = history.length; }
-                }
-            } else if (!isQueen && currentPlayer === "Black") {
-                if (bBigCastle && fCol === 0) {
-                    bBigCastle = false;
-                    if (!bBigCastleAt) { bBigCastleAt = history.length; }
-                }
-                if (bSmallCastle && fCol === 7) {
-                    bSmallCastle = false;
-                    if (!bSmallCastleAt) { bSmallCastleAt = history.length; }
-                }
-            }
-        }
-        if (testCheck) return !isCheck(thisBoard, fRow, fCol, tRow, tCol); else return true;
+        if (testCheck) return !isCheck(thisBoard, fRow, fCol, tRow, tCol, testCasteling); else return true;
     }
 
     function queenMove(thisBoard, fRow, fCol, tRow, tCol, testCheck) {
-        if (rookMove(thisBoard, fRow, fCol, tRow, tCol, true, false, testCheck)) return true;
+        if (rookMove(thisBoard, fRow, fCol, tRow, tCol, false, testCheck)) return true;
         return bishopMove(thisBoard, fRow, fCol, tRow, tCol, testCheck);
     }
 
     function kingMove(thisBoard, fRow, fCol, tRow, tCol, testCasteling, testCheck) {
         // The king can move one square in any direction
         if (Math.abs(fRow - tRow) <= 1 && Math.abs(fCol - tCol) <= 1) {
-            currentPlayer === "White" ? (wBigCastle = false, wSmallCastle = false) : (bBigCastle = false, bSmallCastle = false);
-            if (currentPlayer === "White" && !wBigCastleAt) { wBigCastleAt = history.length; }
-            if (currentPlayer === "White" && !wSmallCastleAt) { wSmallCastleAt = history.length; }
-            if (currentPlayer === "Black" && !bBigCastleAt) { bBigCastleAt = history.length; }
-            if (currentPlayer === "Black" && !bSmallCastleAt) { bSmallCastleAt = history.length; }
-            if (testCheck) return !isCheck(thisBoard, fRow, fCol, tRow, tCol); else return true;
+            if (testCheck) return !isCheck(thisBoard, fRow, fCol, tRow, tCol, testCasteling); else return true;
             // Test if the castling move is possible
         } else if (testCasteling) {
             if (currentPlayer === "White") {
@@ -261,7 +237,7 @@ function movePiece(selectedPiece, targetPiece) {
                         if (board[i][j].type === "pawn") { if (pawnMove(board, i, j, row, col, otherPlayer, false, false)) return; }
                         else if (board[i][j].type === "knight") { if (knightMove(board, i, j, row, col, false)) return; }
                         else if (board[i][j].type === "bishop") { if (bishopMove(board, i, j, row, col, false)) return; }
-                        else if (board[i][j].type === "rook") { if (rookMove(board, i, j, row, col, false, false, false)) return; }
+                        else if (board[i][j].type === "rook") { if (rookMove(board, i, j, row, col, false, false)) return; }
                         else if (board[i][j].type === "queen") { if (queenMove(board, i, j, row, col, false)) return; }
                         else if (board[i][j].type === "king") { if (kingMove(board, i, j, row, col, false, false)) return; }
                     }
@@ -289,7 +265,7 @@ function movePiece(selectedPiece, targetPiece) {
         isTheEnd();
     }
 
-    function isCheck(board, fRow, fCol, tRow, tCol) {
+    function isCheck(board, fRow, fCol, tRow, tCol, testCasteling) {
         let thisBoard = [];
         for (let i = 0; i < 8; i++) {
             thisBoard[i] = [];
@@ -319,10 +295,38 @@ function movePiece(selectedPiece, targetPiece) {
                     if (thisBoard[i][j].type === "pawn") { if (pawnMove(thisBoard, i, j, kRow, kCol, otherPlayer, false, false)) return true; }
                     else if (thisBoard[i][j].type === "knight") { if (knightMove(thisBoard, i, j, kRow, kCol, false)) return true; }
                     else if (thisBoard[i][j].type === "bishop") { if (bishopMove(thisBoard, i, j, kRow, kCol, false)) return true; }
-                    else if (thisBoard[i][j].type === "rook") { if (rookMove(thisBoard, i, j, kRow, kCol, false, false, false)) return true; }
+                    else if (thisBoard[i][j].type === "rook") { if (rookMove(thisBoard, i, j, kRow, kCol, false, false)) return true; }
                     else if (thisBoard[i][j].type === "queen") { if (queenMove(thisBoard, i, j, kRow, kCol, false)) return true; }
                     else if (thisBoard[i][j].type === "king") { if (kingMove(thisBoard, i, j, kRow, kCol, false, false)) return true; }
                 }
+            }
+        }
+        if (testCasteling) {
+            if (currentPlayer === "White"&&board[fRow][fCol].type==="rook") {
+                if (wBigCastle && fCol === 0) {
+                    wBigCastle = false;
+                    if (!wBigCastleAt) { wBigCastleAt = history.length; }
+                }
+                if (wSmallCastle && fCol === 7) {
+                    wSmallCastle = false;
+                    if (!wSmallCastleAt) { wSmallCastleAt = history.length; }
+                }
+            } else if (currentPlayer === "Black"&&board[fRow][fCol].type==="rook") {
+                if (bBigCastle && fCol === 0) {
+                    bBigCastle = false;
+                    if (!bBigCastleAt) { bBigCastleAt = history.length; }
+                }
+                if (bSmallCastle && fCol === 7) {
+                    bSmallCastle = false;
+                    if (!bSmallCastleAt) { bSmallCastleAt = history.length; }
+                }
+            }
+            if(board[fRow][fCol].type==="king"){
+                currentPlayer === "White" ? (wBigCastle = false, wSmallCastle = false) : (bBigCastle = false, bSmallCastle = false);
+                if (currentPlayer === "White" && !wBigCastleAt) { wBigCastleAt = history.length; }
+                if (currentPlayer === "White" && !wSmallCastleAt) { wSmallCastleAt = history.length; }
+                if (currentPlayer === "Black" && !bBigCastleAt) { bBigCastleAt = history.length; }
+                if (currentPlayer === "Black" && !bSmallCastleAt) { bSmallCastleAt = history.length; }
             }
         }
         return false;
@@ -342,7 +346,7 @@ function movePiece(selectedPiece, targetPiece) {
                     for (let k = 0; k < 8; k++) {
                         for (let l = 0; l < 8; l++) {
                             if (board[k][l].color !== currentPlayer) {
-                                if (board[i][j].type === "rook") { if (rookMove(board, i, j, k, l, false, false, true)) return; }
+                                if (board[i][j].type === "rook") { if (rookMove(board, i, j, k, l, false, true)) return; }
                                 else if (board[i][j].type === "knight") { if (knightMove(board, i, j, k, l, true)) return; }
                                 else if (board[i][j].type === "bishop") { if (bishopMove(board, i, j, k, l, true)) return; }
                                 else if (board[i][j].type === "queen") { if (queenMove(board, i, j, k, l, true)) return; }
@@ -355,7 +359,7 @@ function movePiece(selectedPiece, targetPiece) {
             }
         }
         otherPlayer = currentPlayer === "White" ? "Black" : "White";
-        if (isCheck(board, 0, 0, 0, 0)) endModal(otherPlayer);
+        if (isCheck(board, 0, 0, 0, 0, false)) endModal(otherPlayer);
         else endModal("Draw");
     }
 }
