@@ -118,8 +118,6 @@ function movePiece(selectedPiece, targetPiece) {
         isTheEnd();
     }
 
-    console.log(wBigCastle+" "+wSmallCastle+" "+bBigCastle+" "+bSmallCastle);
-
     function pawnMove(thisBoard, fRow, fCol, tRow, tCol, player, enPassant, testCheck) {
         const direction = player === "White" ? -1 : 1;
         // First move
