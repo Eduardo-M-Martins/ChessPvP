@@ -114,7 +114,7 @@ function movePiece(selectedPiece, targetPiece) {
         pawnToPiece();
         currentPlayer = currentPlayer === "White" ? "Black" : "White";
         turnIndicator.textContent = `Current turn: ${currentPlayer}`;
-        if (!((toRow == 0 || toRow == 7) && board[toRow][toCol].type === "pawn")) {updateBoard(board, true);}
+        if (!((toRow == 0 || toRow == 7) && board[toRow][toCol].type === "pawn")) { updateBoard(board, true); }
         isTheEnd();
     }
 
@@ -142,7 +142,7 @@ function movePiece(selectedPiece, targetPiece) {
             && thisBoard[fRow][tCol].type === "pawn" && thisBoard[fRow][tCol].color !== player
             && (fRow + direction === tRow) && (history[history.length - 2][tRow + direction][tCol].type == "pawn")
             && (history[history.length - 1][tRow + direction][tCol].type == "")) {
-            if(enPassant){thisBoard[fRow][tCol] = new Piece("", "  ", "");}
+            if (enPassant) { thisBoard[fRow][tCol] = new Piece("", "  ", ""); }
             if (testCheck) return !isCheck(thisBoard, fRow, fCol, tRow, tCol); else return true;
         }
         return false;
